@@ -1,0 +1,481 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /create/chat_user:
+    post:
+      tags:
+        - Core
+      summary: Create Chat User
+      operationId: create_chat_user_create_chat_user_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatUser'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatUserResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /create/user_conversation:
+    post:
+      tags:
+        - Core
+      summary: Create User Conversation
+      description: |-
+        this to create new conversation for user
+        Payload: conversation_name, chat_user_id
+      operationId: create_user_conversation_create_user_conversation_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserConversation'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConversationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /chat_role:
+    get:
+      tags:
+        - Core
+      summary: Get Chat Role
+      description: this to get all chat roles
+      operationId: get_chat_role_chat_role_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ChatRole'
+                type: array
+                title: Response Get Chat Role Chat Role Get
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /user_conversations/{chat_user_id}:
+    get:
+      tags:
+        - Core
+      summary: Get User Conversations
+      description: this to get all conversations for user
+      operationId: get_user_conversations_user_conversations__chat_user_id__get
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+      parameters:
+        - name: chat_user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Chat User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConversationsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /update/user_conversation:
+    patch:
+      tags:
+        - Core
+      summary: Rename User Conversation
+      description: |-
+        this to rename conversation for user
+        recieves: conversation_name, chat_user_id, user_conversation_id
+      operationId: rename_user_conversation_update_user_conversation_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameConversation'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenameConversationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /chat_message:
+    get:
+      tags:
+        - Core
+      summary: Chat Message Response
+      description: this to get response for chat message by calling LLM endpoint
+      operationId: chat_message_response_chat_message_get
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /message_feedback:
+    post:
+      tags:
+        - Core
+      summary: Add Message Feedback
+      description: this to add feedback for message
+      operationId: add_message_feedback_message_feedback_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageFeedback'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageFeedbackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+  /conversation_messages/{user_conversation_id}:
+    get:
+      tags:
+        - Core
+      summary: Get Conversation Messages
+      description: this to get 10 messages for conversation
+      operationId: get_conversation_messages_conversation_messages__user_conversation_id__get
+      security:
+        - OAuth2AuthorizationCodeBearer: []
+      parameters:
+        - name: user_conversation_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: User Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationMessagesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ChatMessage:
+      properties:
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        chat_message_content:
+          type: string
+          title: Chat Message Content
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+      type: object
+      required:
+        - chat_user_id
+        - chat_message_content
+        - user_conversation_id
+      title: ChatMessage
+    ChatMessageResponse:
+      properties:
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        chat_message_content:
+          type: string
+          title: Chat Message Content
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+      type: object
+      required:
+        - chat_user_id
+        - chat_message_content
+        - user_conversation_id
+      title: ChatMessageResponse
+    ChatRole:
+      properties:
+        chat_role_id:
+          type: integer
+          title: Chat Role Id
+        chat_role_name:
+          type: string
+          title: Chat Role Name
+      type: object
+      required:
+        - chat_role_id
+        - chat_role_name
+      title: ChatRole
+    ChatUserResponse:
+      properties:
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        chat_user_email:
+          type: string
+          title: Chat User Email
+        chat_user_firstname:
+          type: string
+          title: Chat User Firstname
+        chat_user_lastname:
+          type: string
+          title: Chat User Lastname
+      type: object
+      required:
+        - chat_user_id
+        - chat_user_email
+        - chat_user_firstname
+        - chat_user_lastname
+      title: ChatUserResponse
+    ConversationMessagesResponse:
+      properties:
+        conversation_id:
+          type: integer
+          title: Conversation Id
+        messages:
+          items:
+            type: object
+          type: array
+          title: Messages
+      type: object
+      required:
+        - conversation_id
+        - messages
+      title: ConversationMessagesResponse
+    CreateChatUser:
+      properties:
+        chat_user_email:
+          type: string
+          title: Chat User Email
+        chat_user_firstname:
+          type: string
+          title: Chat User Firstname
+        chat_user_lastname:
+          type: string
+          title: Chat User Lastname
+      type: object
+      required:
+        - chat_user_email
+        - chat_user_firstname
+        - chat_user_lastname
+      title: CreateChatUser
+    HTTPValidationError:
+      properties:
+        detail:
+          type: string
+          title: Message
+      type: object
+      title: HTTPValidationError
+    MessageFeedback:
+      properties:
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+        message_id:
+          type: integer
+          title: Message Id
+        feedback:
+          type: boolean
+          title: Feedback
+        feedback_comment:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Feedback Comment
+      type: object
+      required:
+        - user_conversation_id
+        - message_id
+        - feedback
+        - feedback_comment
+      title: MessageFeedback
+    MessageFeedbackResponse:
+      properties:
+        user_chat_feedback_id:
+          type: integer
+          title: User Chat Feedback Id
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+        message_id:
+          type: integer
+          title: Message Id
+      type: object
+      required:
+        - user_chat_feedback_id
+        - user_conversation_id
+        - message_id
+      title: MessageFeedbackResponse
+    RenameConversation:
+      properties:
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        conversation_name:
+          type: string
+          title: Conversation Name
+      type: object
+      required:
+        - user_conversation_id
+        - chat_user_id
+        - conversation_name
+      title: RenameConversation
+    RenameConversationResponse:
+      properties:
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        conversation_name:
+          type: string
+          title: Conversation Name
+      type: object
+      required:
+        - user_conversation_id
+        - chat_user_id
+        - conversation_name
+      title: RenameConversationResponse
+    UserConversation:
+      properties:
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        conversation_name:
+          type: string
+          title: Conversation Name
+      type: object
+      required:
+        - chat_user_id
+        - conversation_name
+      title: UserConversation
+    UserConversationResponse:
+      properties:
+        user_conversation_id:
+          type: integer
+          title: User Conversation Id
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+      type: object
+      required:
+        - user_conversation_id
+        - chat_user_id
+      title: UserConversationResponse
+    UserConversationsListResponse:
+      properties:
+        chat_user_id:
+          type: integer
+          title: Chat User Id
+        conversations:
+          items:
+            type: object
+          type: array
+          title: Conversations
+      type: object
+      required:
+        - chat_user_id
+        - conversations
+      title: UserConversationsListResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2AuthorizationCodeBearer:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            openid: Identifies the request as an OpenID Connect request
+            profile: Requests access to the end user's default profile claims
+            email: Requests access to the email and email_verified claims
+          authorizationUrl: https://wynnresorts.okta.com/oauth2/aus10ztd75lEXFt7o358/v1/authorize
+          tokenUrl: https://wynnresorts.okta.com/oauth2/aus10ztd75lEXFt7o358/v1/token
